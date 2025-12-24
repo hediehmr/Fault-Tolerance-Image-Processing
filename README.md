@@ -1,71 +1,51 @@
-# Fault-Tolerance-Image-Processing
-# CNN-Based Fault Tolerance for Image Processing
+# Approximation-based Fault Tolerance in Image Processing
 
 [![Python](https://img.shields.io/badge/Python-3.x-blue.svg)](https://www.python.org/)
 [![TensorFlow](https://img.shields.io/badge/TensorFlow-2.x-orange.svg)](https://tensorflow.org/)
-[![Status](https://img.shields.io/badge/Status-Research_Implementation-green.svg)]()
+[![Status](https://img.shields.io/badge/Status-Research-green.svg)]()
 
 ## 📌 Abstract
-This repository contains the implementation of an **Approximation-based Fault Tolerance** mechanism for image processing applications. 
+This project implements a lightweight fault tolerance mechanism for image processing applications, inspired by the work of *Biasielli et al.* (IEEE).
 
-Traditional fault tolerance methods like **Duplication With Comparison (DWC)** impose a 100% overhead in execution time and energy, which is often too costly for real-time or resource-constrained systems. Furthermore, DWC is overly strict for image processing, where slight pixel-level variations are often acceptable to the human eye.
+Traditional reliability methods, such as **Duplication With Comparison (DWC)**, impose a **100% overhead** by requiring exact bit-wise matches. This is often overly strict for image processing tasks where human vision tolerates minor errors. 
 
-**Our Solution:** Instead of full duplication, we employ a lightweight **Convolutional Neural Network (CNN)** as a "Checker". This CNN predicts the expected output class/features. If the main processor's output diverges significantly from the CNN's prediction, a fault is detected. This approach distinguishes between *usable* and *unusable* images rather than just *exact* matches.
+**Our Solution:** We replace the exact redundant copy with a **CNN-based Approximation Checker**. This allows the system to distinguish between *usable* and *unusable* images based on a flexible threshold, significantly reducing re-execution costs.
 
-## 🚀 Key Results
-Based on the experimental results presented in the project report:
+## 🛠️ System Architecture
+The core innovation is the parallel execution of the main task and a lightweight Neural Network.
 
-- **Performance Gain:** Achieved approximately **30% reduction in execution time** compared to traditional DWC.
-- **Reliability:** Maintained a high fault detection rate with **< 4% error rate** (misclassification of unusable images).
-- **Efficiency:** Successfully trades off a negligible amount of accuracy for significant performance improvements using Approximate Computing principles.
+![Proposed Architecture](docs/architecture.png)
+*Figure 1: High-level block diagram. The input image is processed by the Main Filter and the CNN Predictor simultaneously. The Decision Block compares their outputs against the Usability Threshold ($U_{th}$).*
 
-## 🛠️ Methodology
-The project implements the concepts from the paper *"Approximation-based Fault Tolerance in Image Processing Applications"* (Biasielli et al.).
+### CNN Model Design
+To ensure the overhead remains low, we designed a shallow CNN architecture optimized for fast inference rather than deep feature extraction.
 
-1.  **Fault Injection:** Simulating hardware faults (bit-flips) during image processing.
-2.  **CNN Checker:** A lightweight model trained to approximate the image processing task.
-3.  **Decision Logic:** Comparing the faulty output with the CNN prediction to decide if the image is "Usable" or "Discarded".
+![CNN Architecture](docs/cnn_structure.png)
+*Figure 2: The lightweight CNN architecture used as the "Checker". It consists of minimal convolutional layers to approximate the main filter's output with low latency.*
 
-## 📊 Evaluation
-The system was tested under different fault injection rates ($d$) and usability thresholds ($U_{th}$).
+## 📊 Experimental Results
+We evaluated the system's performance by injecting random bit-flip faults ($d$) and varying the usability threshold ($U_{th}$).
 
-| Metric | Traditional DWC | Our CNN-Based Approach |
+As shown in the chart below, our method achieves a significant reduction in execution time compared to the DWC baseline, especially when the usability threshold allows for more flexibility ($U_{th}=0.85$).
+
+![Performance Chart](docs/results_chart.png)
+*Figure 3: Average execution time (ms) comparison. The proposed method (bars on the right) demonstrates up to 30% speedup compared to the DWC baseline (left).*
+
+### Key Performance Metrics
+| Configuration | Speedup vs DWC | False Negative Rate |
 | :--- | :---: | :---: |
-| **Overhead** | ~100% (2x Compute) | Low (Inference Cost) |
-| **Execution Time** | Baseline | **~30% Faster** |
-| **Flexibility** | Rigid (Exact Match) | Flexible (Usability Metric) |
+| **DWC (Baseline)** | - | 0% |
+| **Our Method ($U_{th}=0.45$)** | ~15% | < 2% |
+| **Our Method ($U_{th}=0.85$)** | **~30%** | < 4% |
 
-*(Note: Detailed charts regarding execution time and different configurations can be found in the report).*
+## 📄 Full Documentation
+For a deep dive into the mathematical proofs, fault injection models, and the complete Persian report, please refer to the document below:
+
+👉 **[Download Full Project Report (PDF)](docs/Final_Report_Persian.pdf)**
 
 ## 💻 Installation & Usage
 
-### Prerequisites
-* Python 3.x
-* TensorFlow / Keras
-* NumPy
-* OpenCV
-* Matplotlib
-
-### Running the Project
-Since the core implementation is in a Jupyter Notebook:
-
-1.  Clone the repo:
-    ```bash
-    git clone [https://github.com/hediehmr/Fault-Tolerance-Image-Processing.git](https://github.com/hediehmr/Fault-Tolerance-Image-Processing.git)
-    ```
-2.  Install dependencies:
-    ```bash
-    pip install notebook tensorflow numpy opencv-python matplotlib
-    ```
-3.  Open the notebook:
-    ```bash
-    jupyter notebook final_fault_project.ipynb
-    ```
-
-## 📄 References
-This project is an implementation and analysis based on:
-> *Matteo Biasielli, et al., "Approximation-based Fault Tolerance in Image Processing Applications"*
-
-## 📧 Contact
-**Hedieh Moftakhari Rostamkhani** ML Performance & Systems Engineer  
-[hedieh.rm@gmail.com](mailto:hedieh.rm@gmail.com)
+1. **Clone the repository:**
+   ```bash
+   git clone [https://github.com/hediehmr/Fault-Tolerance-Image-Processing.git](https://github.com/hediehmr/Fault-Tolerance-Image-Processing.git)
+   cd Fault-Tolerance-Image-Processing
